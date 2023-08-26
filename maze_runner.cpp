@@ -65,19 +65,22 @@ pos_t load_maze(const char* file_name) {
 
 // Função que imprime o labirinto
 void print_maze() {
-	for (int i = 0; i < num_rows; ++i) {
-		for (int j = 0; j < num_cols; ++j) {
-			if (maze[i][j] == 'o') {
-				// Impressão da letra 'o' em vermelho
-				printf("\033[1;31mo\033[0m");
-			} else {
-				printf("%c", maze[i][j]);
-			}
-		}
-		printf("\n");
-	}
-	// Delay de 80 ms em cada passo
-	usleep(80000);
+    for (int i = 0; i < num_rows; ++i) {
+        for (int j = 0; j < num_cols; ++j) {
+            if (maze[i][j] == 'o') {
+                // Impressão do caractere 'o' em vermelho
+                printf("\033[1;31mo\033[0m");
+            } else if (maze[i][j] == '.') {
+                // Impressão do caractere '.' em vermelho
+                printf("\033[1;31m.\033[0m");
+            } else {
+                printf("%c", maze[i][j]);
+            }
+        }
+        printf("\n");
+    }
+    // Delay de 80 ms em cada passo
+    usleep(80000);
 }
 
 // Função responsável pela navegação: recebe como entrada a posição inicial e retorna um boolean indicando se a saída foi encontrada
@@ -117,7 +120,6 @@ bool walk(pos_t pos) {
 			exitFound = true;
 		// Verifica se a posição à esquerda da posição atual é válida e se ela contém um caminho 'x' não visitado
 		} else if (pos.j > 0 && maze[pos.i][pos.j - 1] == 'x') {
-			maze[pos.i][pos.j] = 'o';
 			pos_t next_pos = {pos.i, pos.j - 1};
 			valid_positions.push(next_pos);
 		}
@@ -129,6 +131,8 @@ bool walk(pos_t pos) {
 			pos_t next_pos = {pos.i, pos.j + 1};
 			valid_positions.push(next_pos);
 		}
+
+		maze[pos.i][pos.j] = '.';
 
 		if (exitFound) {
 			return true;
