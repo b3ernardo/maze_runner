@@ -98,69 +98,64 @@ void walk(pos_t pos) {
 
         maze[pos.i][pos.j] = '.';
 
-        // Verifica se a saída foi encontrada à esquerda
-        if (maze[pos.i][pos.j - 1] == 's' && pos.j - 1 >= 0) {
-            print_maze();
-            exit_found = true;
-        } else if (maze[pos.i][pos.j - 1] == 'x' && pos.j - 1 >= 0) {
-            next_pos = {pos.i, pos.j - 1};
-            valid_positions.push(next_pos);
-        }
-
-        // Verifica se a saída foi encontrada à direita
-        if (maze[pos.i][pos.j + 1] == 's' && pos.j + 1 < num_cols) {
-            print_maze();
-            exit_found = true;
-        } else if (maze[pos.i][pos.j + 1] == 'x' && pos.j + 1 < num_cols) {
-            next_pos = {pos.i, pos.j + 1};
-            valid_positions.push(next_pos);
-        }
-
-        // Verifica se a saída foi encontrada abaixo
-        if (pos.i + 1 < num_rows) {
-            if (maze[pos.i + 1][pos.j] == 's') {
-                print_maze();
+        // Verifica se a posição à esquerda é válida
+        if (pos.j - 1 >= 0) {
+            // Verifica se a saída foi encontrada à esquerda
+            if (maze[pos.i][pos.j - 1] == 's') {
+                maze[pos.i][pos.j] = 'o';
                 exit_found = true;
+            // Verifica se a próxima posição à esquerda é válida
+            } else if (maze[pos.i][pos.j - 1] == 'x') {
+                next_pos = {pos.i, pos.j - 1};
+                valid_positions.push(next_pos);
+            }
+        }
+
+        // Verifica se a posição à direita é válida
+        if (pos.j + 1 < num_cols) {
+            // Verifica se a saída foi encontrada à direita
+            if (maze[pos.i][pos.j + 1] == 's') {
+                maze[pos.i][pos.j] = 'o';
+                exit_found = true;
+            // Verifica se a próxima posição à direita é válida
+            } else if (maze[pos.i][pos.j + 1] == 'x') {
+                next_pos = {pos.i, pos.j + 1};
+                valid_positions.push(next_pos);
+            }
+        }
+
+        // Verifica se a posição abaixo é válida
+        if (pos.i + 1 < num_rows) {
+            // Verifica se a saída foi encontrada abaixo
+            if (maze[pos.i + 1][pos.j] == 's') {
+                maze[pos.i][pos.j] = 'o';
+                exit_found = true;
+            // Verifica se a próxima posição abaixo é válida
             } else if (maze[pos.i + 1][pos.j] == 'x') {
                 next_pos = {pos.i + 1, pos.j};
                 valid_positions.push(next_pos);
             }
         }
 
-        // Verifica se a saída foi encontrada acima
+        // Verifica se a posição acima é válida
         if (pos.i - 1 >= 0) {
+            // Verifica se a saída foi encontrada acima
             if (maze[pos.i - 1][pos.j] == 's') {
-                print_maze();
+                maze[pos.i][pos.j] = 'o';
                 exit_found = true;
+            // Verifica se a próxima posição acima é válida
             } else if (maze[pos.i - 1][pos.j] == 'x') {
                 next_pos = {pos.i - 1, pos.j};
                 valid_positions.push(next_pos);
             }
         }
         
-        // Verifica o tamanho da pilha para determinar o comportamento
-        if (valid_positions.size() == 1) {
-            pos = {valid_positions.top().i , valid_positions.top().j};
-        } else if (valid_positions.size() == 2) {
-            pos = {valid_positions.top().i , valid_positions.top().j};
+        // Verifica o tamanho da pilha e cria threads para explorar as próximas posições
+        while (valid_positions.size() > 0) {
+            next_pos = {valid_positions.top().i , valid_positions.top().j};
             valid_positions.pop();
-            next_pos = {valid_positions.top().i, valid_positions.top().j};
-            // Cria uma thread separada para explorar a próxima posição
             thread f(walk, next_pos);
             f.detach();
-        } else if (valid_positions.size() == 3) {
-            pos = {valid_positions.top().i , valid_positions.top().j};
-            valid_positions.pop();
-            next_pos = {valid_positions.top().i, valid_positions.top().j};
-            // Cria uma thread separada para explorar a próxima posição
-            thread f(walk, next_pos);
-            f.detach();
-
-            valid_positions.pop();
-            next_pos = {valid_positions.top().i, valid_positions.top().j};
-            // Cria outra thread separada para explorar a próxima posição
-            thread g(walk, next_pos);
-            g.detach();
         }
     }
 }
