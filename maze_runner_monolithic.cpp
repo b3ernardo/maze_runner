@@ -5,7 +5,7 @@
 	Matrícula: 2020084290
 	Disciplina: Automação em Tempo Real
 
-	Para rodar: ./maze_runner_monolithic ../data/maze.txt
+	Para rodar: mudar o nome para maze_runner e digitar ./maze_runner ../data/maze.txt
 */
 
 #include <stdio.h>
